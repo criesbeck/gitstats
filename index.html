@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gitstats</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="./style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Gitstats: Commit Log Analyzer</h2>
+
+    <div class="upload-box">
+      <p>
+        Upload the git log for your main branch, e.g., upload <code>~/gitlog.txt</code> after doing
+      </p>
+      <pre><code>git log --no-merges --pretty=format:"Author: %an <%ae>%nDate: %aD%n%(trailers:key=Co-authored-by,unfold=true)" --date=short --name-status main > ~/gitlog.txt</code></pre>
+      <div class="mb-3">
+        <input class="form-control" type="file" id="load-log">
+      </div><p>
+        Optionally, upload a JSON file to make git usernames to team member names.
+      </p>
+      <div class="mb-3">
+        <input class="form-control" type="file" id="load-names">
+      </div>
+      <p>
+        For more about this tool, see <a href="https://github.com/criesbeck/gitstats" target="_blank">the README</a>.
+      </p>
+    </div>
+
+    <h2>Commit History</h2>
+    <p>
+      Zeros and ones suggest an underlying obstacle to participation. Investigate!
+    </p> 
+    <table class="table" id="commit-history">
+      <thead><tr></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>Collaborations</h2>
+    <div id="collaboration-section">
+      <p>
+        Number of commits done with other team members.
+      </p> 
+    </div>
+
+    <h2>Bus Factor</h2>
+    <p>
+      Files in pink near the top need more contributors. Developers in yellow
+      for specific files could use experience editing those files.
+    </p> 
+
+    <table class="table" id="bus-factor">
+      <thead> <tr></tr></thead>
+      <tbody></tbody>
+    </table>
+
+  </div>
+
+  <script type="module">
+    import { countCommits, getData, isActiveContributor, loadFile } from './script.js';
+    let log = null;
+    let names = null;
+
+    const join = (lst, fn) => lst.map(fn).join('');
+
+    const updatePage = () => {
+      const data = getData(log, names);
+      updateCommitHistory(data);
+      updateCollaborations(data);
+      updateBusFactor(data);
+    };
+
+    const updateCommitHistory = (data) => {
+      document.querySelector('#commit-history thead tr').innerHTML = (
+        `<th>Name</th><th>Total</th>${join(data.weeks, week => `<th>${week}</th>`)}`
+      );
+        
+      document.querySelector('#commit-history tbody').innerHTML = data.authors.map(author => (
+        `<tr>
+           <td>${author}</td>
+           <td>${data.commits[author].length}</td>
+           ${join(data.weeks, week => (
+            `<td>${countCommits(data.commits[author], week)}</td>`
+           ))}
+         </tr>`
+      )).join('');
+    };
+
+    const updateCollaborations = (data) => {
+      if (!data.collaborations) {
+        document.querySelector('#collaboration-section').innerHTML = (
+          `<p>No co-author data found.</p>`
+        );
+        return;
+      }
+
+      document.querySelector('#collaboration-section').innerHTML = (`
+        <p>
+          Number of commits done with other team members. Higher is better. First entry
+          is the number of commits the author made alone. Lower is better.
+        </p> 
+        <table class="table" id="collaborations">
+          <thead><tr></tr></thead>
+          <tbody></tbody>
+        </table>`
+      );
+
+      document.querySelector('#collaborations thead tr').innerHTML = (
+        `<th>Name</th>${join(data.authors, author => `<th>${author}</th>`)}`
+      );
+
+      document.querySelector('#collaborations tbody').innerHTML = (
+        join(data.authors, author => (
+          `<tr>
+            <td>${author}</td>
+            ${join(data.authors, author2 => (
+              `<td>${data.collaborations[author][author2] ?? '-'}</td>`
+            ))}
+          </tr>`
+        ))
+      );
+    };
+
+    const updateBusFactor = (data) => {
+      document.querySelector('#bus-factor thead tr').innerHTML = (
+        `<th>Filee</th>${join(data.authors, author => `<th>${author}</th>`)}`
+      );
+
+      document.querySelector('#bus-factor tbody').innerHTML = (
+        join(data.files, entry => (
+          `<tr>
+            <td class="${ entry.actives < 3 ? 'risky' : '' }">
+              <small>${pathPart(entry.file)}</small>
+              <div>${filePart(entry.file)}</div>
+              <small>
+                Edits: ${entryEdits(entry)}
+              </small>
+            </td>
+            ${join(data.authors, author => (
+              `<td class="${isActiveContributor(entry.frecency, entry.authors[author]) ? '' : 'low' }">
+                <div>${authorContribution(entry, author)}%</div>
+                <small>Edits: ${entry.authors[author].edits.length}</small>
+                <small> ${shortDate(entry.authors[author].edits[0])}</small>
+              </td>`
+            ))}
+          </tr>`
+        ))
+      );
+    };
+
+    const filePart = (filename) => {
+      const n = filename.lastIndexOf('/');
+      return n === -1 ? filename : filename.slice(n + 1);
+    };
+    
+    const pathPart = (filename) => {
+      const n = filename.lastIndexOf('/');
+      return n === -1 ? '' : filename.slice(0, n + 1);
+    };
+
+    const shortDate = (date) => (
+      date ? new Date(date).toLocaleDateString() : '--'
+    );
+
+    const entryEdits = (entry) => (
+      Object.values(entry.authors).reduce((sum, author) => sum + author.edits.length, 0)
+    );
+
+    const authorContribution = (fileEntry, author) => (
+      Math.ceil(fileEntry.authors[author].frecency/fileEntry.frecency*100)
+    );
+
+    document.querySelector('#load-log').addEventListener('change', evt => {
+      loadFile(evt.target.files[0], (text) => {
+        log = text;
+        console.log(`chars ${log.length}`)
+        evt.target.blur();
+        updatePage();
+      })
+    });
+
+    document.querySelector('#load-names').addEventListener('change', evt => {
+      loadFile(evt.target.files[0], (text) => {
+        names = JSON.parse(text);
+        console.log(names)
+        evt.target.blur();
+        updatePage();
+      })
+    })
+  </script>
+
+  
+</body>
+</html>
