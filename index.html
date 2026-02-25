@@ -14,13 +14,23 @@
 
     <div class="upload-box">
       <p>
-        Upload the git log for your main branch, e.g., upload <code>~/gitlog.txt</code> after doing
+        Create a git log file for your main branch. If you are not tracking co-authors, use
       </p>
-      <pre><code>git log --no-merges --pretty=format:"Author: %an <%ae>%nDate: %aD%n%(trailers:key=Co-authored-by,unfold=true)" --date=short --name-status main > ~/gitlog.txt</code></pre>
+      <pre>git log --no-merges --name-status main > ~/gitlog.txt</pre>
+      <p>
+        If you are tracking co-authors, use
+      </p>
+      <pre>git log --no-merges --date=short --name-status \
+  --pretty=format:"Author: %an <%ae>%nDate: %aD%n%(trailers:key=Co-authored-by,unfold=true)" \
+  main > ~/gitlog.txt</pre>
+      <p>
+        Upload the git log file for analysis.
+      </p>
       <div class="mb-3">
         <input class="form-control" type="file" id="load-log">
       </div><p>
-        Optionally, upload a JSON file to make git usernames to team member names.
+        For more readable team member names, you can optionally, upload a 
+        JSON file with an object whose keys are git user names mapping to team member names.
       </p>
       <div class="mb-3">
         <input class="form-control" type="file" id="load-names">
@@ -32,7 +42,8 @@
 
     <h2>Commit History</h2>
     <p>
-      Zeros and ones suggest an underlying obstacle to participation. Investigate!
+      A running total of weekly commits. 
+      Zeros and ones suggest an underlying obstacle to participation to investigate.
     </p> 
     <table class="table" id="commit-history">
       <thead><tr></tr></thead>
@@ -42,14 +53,14 @@
     <h2>Collaborations</h2>
     <div id="collaboration-section">
       <p>
-        Number of commits done with other team members.
+        Number of commits co-authored with other team members.
       </p> 
     </div>
 
     <h2>Bus Factor</h2>
     <p>
-      Files in pink near the top need more contributors. Developers in yellow
-      for specific files could use experience editing those files.
+      Tracks who has edited what when. Pink boxes near the top suggest files that need more 
+      contributors. Yellow boxes indicates files that may be unfamiliar for each developer.
     </p> 
 
     <table class="table" id="bus-factor">
