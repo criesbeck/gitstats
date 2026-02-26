@@ -14,15 +14,9 @@
 
     <div class="upload-box">
       <p>
-        Create a git log file for your main branch. If you are not tracking co-authors, use
+        Create a git log file for your main branch.
       </p>
       <pre title="click to copy" style="width:fit-content">git log --no-merges --name-status main > ~/gitlog.txt</pre>
-      <p>
-        If you are tracking co-authors, use
-      </p>
-      <pre title="click to copy" style="width:fit-content">git log --no-merges --name-status \
-  --pretty=format:"Author: %an <%ae>%nDate: %aD%n%(trailers:key=Co-authored-by,unfold=true)" \
-  main > ~/gitlog.txt</pre>
       <p>
         Upload the git log file for analysis.
       </p>
@@ -186,7 +180,7 @@
     document.querySelector('#load-log').addEventListener('change', evt => {
       loadFile(evt.target.files[0], (text) => {
         log = text;
-        console.log(`chars ${log.length}`)
+        evt.target.value = '';
         evt.target.blur();
         updatePage();
       })
@@ -195,7 +189,7 @@
     document.querySelector('#load-names').addEventListener('change', evt => {
       loadFile(evt.target.files[0], (text) => {
         names = JSON.parse(text);
-        console.log(names)
+        evt.target.value = '';
         evt.target.blur();
         updatePage();
       })

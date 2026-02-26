@@ -24,11 +24,14 @@ const days = (m, n) => Math.abs(m - n) / day;
 
 const decay = (now, then) => Math.exp(-lambda * days(now, then));
 
+const COMMIT_PAT = /^commit\s+([a-f0-9]+)$/;
+const isCommitLine = (line) => COMMIT_PAT.test(line);
+
 const AUTHOR_PAT = /^Author:\s+(.+)\s+</;
 const isAuthorLine = (line) => AUTHOR_PAT.test(line);
 const getAuthor = (line) => AUTHOR_PAT.exec(line)[1];
 
-const COAUTHOR_PAT = /^Co-authored-by:\s+(.+)\s+</;
+const COAUTHOR_PAT = /^ *Co-authored-by:\s+(.+)\s+</;
 const isCoAuthorLine = (line) => COAUTHOR_PAT.test(line);
 const getCoAuthor = (line) => COAUTHOR_PAT.exec(line)[1];
 
@@ -84,9 +87,11 @@ const getCommits = (text, names) => {
   const commits = [];
   let commit = null;
   lines.forEach(line => {
-    if (isAuthorLine(line)) {
-      commit = newCommit(getName(getAuthor(line), names));
+    if (isCommitLine(line)) {
+      commit = { authors: [], files: [] };
       commits.push(commit);
+    } else if (isAuthorLine(line)) {
+      commit.authors.push(getName(getAuthor(line), names));
     } else if (isDateLine(line)) {
       commit.date = Date.parse(getDate(line));
     } else if (isCodeFileLine(line)) {
