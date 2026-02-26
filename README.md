@@ -5,12 +5,14 @@ developer teams.
 
 Prepare a git log file and save it somewhere convenient. If you are not tracking co-authors: 
 
-```git log --no-merges --name-status main > ~/gitlog.txt```
+```
+git log --no-merges --name-status main > ~/gitlog.txt
+```
 
 If you are tracking co-authors, :
 
 ```
-git log --no-merges --date=short --name-status \
+git log --no-merges --date=short \
   --pretty=format:"Author: %an <%ae>%nDate: %aD%n%(trailers:key=Co-authored-by,unfold=true)" \
   main > ~/gitlog.txt
 ```

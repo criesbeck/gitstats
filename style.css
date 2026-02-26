@@ -1,7 +1,13 @@
 small { display: block; }
+
 .code-block { height: 20em; margin: 1em; overflow: scroll; white-space: pre; }
+
 table td.risky { background-color: lightpink; }
 table td.low { background-color: lightyellow; }
+
 .upload-box { border: 1px solid blue; padding: 1em; }
 .upload-box input { margin-bottom: 0.5em;}
 .upload-box pre { margin-left: 2em; }
+
+[title="click to copy"] { cursor: pointer; padding: 0.2em; border: 1px solid transparent; }
+[title="click to copy"]:hover { background-color: rgb(236, 235, 235); border: 1px solid rgb(113, 109, 109); }

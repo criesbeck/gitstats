@@ -16,11 +16,11 @@
       <p>
         Create a git log file for your main branch. If you are not tracking co-authors, use
       </p>
-      <pre>git log --no-merges --name-status main > ~/gitlog.txt</pre>
+      <pre title="click to copy" style="width:fit-content">git log --no-merges --name-status main > ~/gitlog.txt</pre>
       <p>
         If you are tracking co-authors, use
       </p>
-      <pre>git log --no-merges --date=short --name-status \
+      <pre title="click to copy" style="width:fit-content">git log --no-merges --name-status \
   --pretty=format:"Author: %an <%ae>%nDate: %aD%n%(trailers:key=Co-authored-by,unfold=true)" \
   main > ~/gitlog.txt</pre>
       <p>
@@ -29,14 +29,13 @@
       <div class="mb-3">
         <input class="form-control" type="file" id="load-log">
       </div><p>
-        For more readable team member names, you can optionally, upload a 
-        JSON file with an object whose keys are git user names mapping to team member names.
+        Optionally, upload a JSON file to map git user names to team member names.
       </p>
       <div class="mb-3">
         <input class="form-control" type="file" id="load-names">
       </div>
       <p>
-        For more about this tool, see <a href="https://github.com/criesbeck/gitstats" target="_blank">the README</a>.
+        <a href="https://github.com/criesbeck/gitstats" target="_blank">More about Gitstats</a>.
       </p>
     </div>
 
@@ -200,7 +199,21 @@
         evt.target.blur();
         updatePage();
       })
-    })
+    });
+
+    [... document.querySelectorAll('[title="click to copy"]')].forEach(elt => elt.addEventListener('click', evt => {
+      copyDivText(evt.target)
+    }));
+
+    const copyDivText = (elt) => {
+      const text = elt.innerText || divElement.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('copied');
+    }).catch(err => {
+        alert('copy failed');
+    });
+}
+ 
   </script>
 
   
