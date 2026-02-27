@@ -17,8 +17,7 @@ in the browser. Nothing is passed to or saved on the server.
 
 # User renaming
 
-Optionally, you can upload a JSON file to replace git usernames with real names. The JSON file should 
-map git usernames to real names, e.g.,
+Optionally, you can upload a JSON file to replace git usernames with real names, e.g.,
 
 ```
 {
@@ -27,7 +26,9 @@ map git usernames to real names, e.g.,
 }
 ```
 
-This can also be used to handle situations where a team member has submitted until several git usernames.
+You can use this to handle situations where a team member has submitted until several git usernames.
+
+If you map a git username to `null`, that git username will be ignored. This is useful for bots or other non-human contributors.
 
 # Output
 

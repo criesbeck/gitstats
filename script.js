@@ -35,7 +35,7 @@ const COAUTHOR_PAT = /^ *Co-authored-by:\s+(.+)\s+</;
 const isCoAuthorLine = (line) => COAUTHOR_PAT.test(line);
 const getCoAuthor = (line) => COAUTHOR_PAT.exec(line)[1];
 
-const getName = (gitname, names) => names?.[gitname] || gitname;
+const getName = (gitname, names) => names && gitname in names ? names[gitname] : gitname;
 
 const DATE_PAT = /^Date:\s+(.+)$/;
 const isDateLine = (line) => DATE_PAT.test(line);
@@ -91,13 +91,15 @@ const getCommits = (text, names) => {
       commit = { authors: [], files: [] };
       commits.push(commit);
     } else if (isAuthorLine(line)) {
-      commit.authors.push(getName(getAuthor(line), names));
+      const author = getName(getAuthor(line), names);
+      if (author) commit.authors.push(author);
+    } else if (isCoAuthorLine(line)) {
+      const author = getName(getCoAuthor(line), names);
+      if (author) commit.authors.push(author);
     } else if (isDateLine(line)) {
       commit.date = Date.parse(getDate(line));
     } else if (isCodeFileLine(line)) {
       commit.files.push(getFile(line));
-    } else if (isCoAuthorLine(line)) {
-      commit.authors.push(getName(getCoAuthor(line), names));
     }
   })
   return commits;
