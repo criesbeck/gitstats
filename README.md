@@ -3,17 +3,15 @@ developer teams.
 
 # Usage
 
-Prepare a git log file and save it somewhere convenient.
+Prepare a git log file and save it somewhere easy to locate, but typically outside your repository. 
+The command below stores the output in your home directory.
 
 ```
 git log --no-merges --name-status main > ~/gitlog.txt
 ```
 
-Put the output file some place easy to find outside your repository. The command above stores the output in 
-your home directory. 
-
 Upload the output file to https://criesbeck.github.io/gitstats/ for analysis. Analysis is done
-in the browser. Nothing is passed to or saved on the server.
+in the browser. Nothing is passed to or saved on the server, but if you prefer, clone this repository and open **index.html** in your browser to run the app locally.
 
 # User renaming
 
@@ -22,13 +20,12 @@ Optionally, you can upload a JSON file to replace git usernames with real names,
 ```
 {
   "jsmith": "John",
-  "jdoe": "Jane"
+  "jdoe": "Jane".
+  "Cursor": null
 }
 ```
 
-You can use this to handle situations where a team member has submitted until several git usernames.
-
-If you map a git username to `null`, that git username will be ignored. This is useful for bots or other non-human contributors.
+Names mapped to `null` will be ignored. User names mapped to the same name will be merged. 
 
 # Output
 

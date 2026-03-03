@@ -23,7 +23,7 @@
       <div class="mb-3">
         <input class="form-control" type="file" id="load-log">
       </div><p>
-        Optionally, upload a JSON file to map git user names to team member names.
+        Optionally, upload a JSON file to replace git user names to team member names.
       </p>
       <div class="mb-3">
         <input class="form-control" type="file" id="load-names">
@@ -64,14 +64,16 @@
   </div>
 
   <script type="module">
-    import { countCommits, getData, isActiveContributor, loadFile } from './script.js';
+    import { countCommits, getAnalyses, isActiveContributor, loadFile } from './script.js';
     let log = null;
     let names = null;
 
-    const join = (lst, fn) => lst.map(fn).join('');
+    const join = (lst, fn) => lst ? lst.map(fn).join('') : '';
+
+    const unique = (lst) => [...new Set(lst)];
 
     const updatePage = () => {
-      const data = getData(log, names);
+      const data = getAnalyses(log, names);
       updateCommitHistory(data);
       updateCollaborations(data);
       updateBusFactor(data);
@@ -103,8 +105,8 @@
 
       document.querySelector('#collaboration-section').innerHTML = (`
         <p>
-          Number of commits done with other team members. Higher is better. First entry
-          is the number of commits the author made alone. Lower is better.
+          Number of days working sole or with someone else and date of most recent 
+          solo or collaborative work.
         </p> 
         <table class="table" id="collaborations">
           <thead><tr></tr></thead>
@@ -117,15 +119,21 @@
       );
 
       document.querySelector('#collaborations tbody').innerHTML = (
-        join(data.authors, author => (
+        join(data.authors, author1 => (
           `<tr>
-            <td>${author}</td>
+            <td>${author1}</td>
             ${join(data.authors, author2 => (
-              `<td>${data.collaborations[author][author2] ?? '-'}</td>`
+              `<td>${collabSummary(data.collaborations[author1][author2])}</td>`
             ))}
           </tr>`
         ))
       );
+    };
+
+    const collabSummary = commits => {
+      if (!commits || commits.length === 0) return '--';
+      const days = unique(commits.map(commit => monthDay(commit.date)));
+      return `${days.length} (${days[0]})`
     };
 
     const updateBusFactor = (data) => {
@@ -167,6 +175,10 @@
 
     const shortDate = (date) => (
       date ? new Date(date).toLocaleDateString() : '--'
+    );
+
+    const monthDay = (date) => (
+      new Date(date).toLocaleString(undefined, { month: 'numeric', day: 'numeric' })
     );
 
     const entryEdits = (entry) => (
