@@ -46,7 +46,7 @@
     <h2>Collaborations</h2>
     <div id="collaboration-section">
       <p>
-        Number of commits co-authored with other team members.
+        A tally of coding done solo versus in collaboration with teammates.
       </p> 
     </div>
 
@@ -105,8 +105,7 @@
 
       document.querySelector('#collaboration-section').innerHTML = (`
         <p>
-          Number of days working sole or with someone else and date of most recent 
-          solo or collaborative work.
+          Number of days working solo followed by days working with teammates.
         </p> 
         <table class="table" id="collaborations">
           <thead><tr></tr></thead>
@@ -123,17 +122,17 @@
           `<tr>
             <td>${author1}</td>
             ${join(data.authors, author2 => (
-              `<td>${collabSummary(data.collaborations[author1][author2])}</td>`
+              `<td>${collabSummary(data.collaborations[author1][author2], author1===author2)}</td>`
             ))}
           </tr>`
         ))
       );
     };
 
-    const collabSummary = commits => {
+    const collabSummary = (commits, solo) => {
       if (!commits || commits.length === 0) return '--';
       const days = unique(commits.map(commit => monthDay(commit.date)));
-      return `${days.length} (${days[0]})`
+      return solo ? days.length : days.map(monthDay).join(',');
     };
 
     const updateBusFactor = (data) => {
@@ -192,6 +191,7 @@
     document.querySelector('#load-log').addEventListener('change', evt => {
       loadFile(evt.target.files[0], (text) => {
         log = text;
+        names = null;
         evt.target.value = '';
         evt.target.blur();
         updatePage();

@@ -1,4 +1,4 @@
-small { display: block; }
+small { display: block; font-size: 0.8em }
 
 .code-block { height: 20em; margin: 1em; overflow: scroll; white-space: pre; }
 
