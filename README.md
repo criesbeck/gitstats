@@ -54,9 +54,8 @@ This is a measure of how much the team is working together. Teams should focus o
 pairs of developers who have not collaborated at all or only a few times. 
 
 Co-author data can be added to commits using 
-[Live Share](https://www.ssw.com.au/rules/co-authored-commits) in VS Code, with the 
 [git-mob](https://marketplace.visualstudio.com/items?itemName=RichardKotze.git-mob)
-VS Code extension, or with 
+VS Code extension or with 
 [the **git commit** command](https://docs.github.com/en/pull-requests/committing-changes-to-your-project/creating-and-editing-commits/creating-a-commit-with-multiple-authors).
 
 
