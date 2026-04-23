@@ -1,8 +1,8 @@
 'use strict';
 
 // Which files and actions to track
-// Only track Add, Change, Modify to JavaScript, HTML, CSS, and YAML files
-const EDIT_PAT = /^[ACM]\s+(.*[.](?:js|jsx|ts|tsx|css|html?|yml))$/;
+// Only track Add, Change, Modify to JavaScript, HTML, CSS, MD, and YAML files
+const EDIT_PAT = /^[ACM]\s+(.*[.](?:js|jsx|md|ts|tsx|css|html?|yml))$/;
 
 // Ignore anything in node_modules, dist, or build
 const IGNORE_PAT = /\s(?:node_modules|build|dist[/])/;
