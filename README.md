@@ -61,9 +61,10 @@ VS Code extension or with
 
 ## Bus factor
 
-The second table displays how often each developer has contributed to each code file. 
-Code file means JavaScript, CSS, HTML, or YAML.
-Most active files are listed first. Activity is based on number and recency of edits.
+The Bus Factor table displays how often and how recently each developer has contributed 
+to each code file. 
+Code file means JavaScript, CSS, HTML, YAML, or Markdown.
+The most active files are listed first, based on number and recency of edits.
 The cells of the table show what percentage each developer contributed to the activity on each file.
 
 Developers who have contributed less than 5% to a file are highlighted. 
