@@ -192,7 +192,6 @@
       loadFile(evt.target.files[0], (text) => {
         log = text;
         names = null;
-        evt.target.value = '';
         evt.target.blur();
         updatePage();
       })
@@ -201,7 +200,6 @@
     document.querySelector('#load-names').addEventListener('change', evt => {
       loadFile(evt.target.files[0], (text) => {
         names = JSON.parse(text);
-        evt.target.value = '';
         evt.target.blur();
         updatePage();
       })
